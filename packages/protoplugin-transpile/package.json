@@ -1,0 +1,38 @@
+{
+  "name": "@bufbuild/protoplugin-transpile",
+  "version": "2.12.0",
+  "license": "Apache-2.0",
+  "description": "Transpiles TypeScript to JavaScript and declaration files with a pinned compiler. This is the transpilation backend of @bufbuild/protoplugin - use @bufbuild/protoplugin instead.",
+  "keywords": ["protobuf", "typescript", "ecmascript", "protoc-plugin"],
+  "homepage": "https://protobufes.com/",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bufbuild/protobuf-es.git",
+    "directory": "packages/protoplugin-transpile"
+  },
+  "scripts": {
+    "prebuild": "rm -rf ./dist/*",
+    "build": "npm run build:cjs && npm run build:esm",
+    "build:cjs": "../../node_modules/typescript/bin/tsc --project tsconfig.json --module commonjs --verbatimModuleSyntax false --moduleResolution node10 --outDir ./dist/cjs && echo >./dist/cjs/package.json '{\"type\":\"commonjs\"}'",
+    "build:esm": "../../node_modules/typescript/bin/tsc --project tsconfig.json --outDir ./dist/esm",
+    "format": "biome format --write",
+    "license-header": "license-header",
+    "lint": "biome lint --error-on-warnings",
+    "attw": "attw --pack"
+  },
+  "type": "module",
+  "sideEffects": false,
+  "main": "./dist/cjs/index.js",
+  "exports": {
+    ".": {
+      "import": "./dist/esm/index.js",
+      "require": "./dist/cjs/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "dependencies": {
+    "@typescript/vfs": "^1.6.2",
+    "typescript": "5.4.5"
+  },
+  "files": ["dist/**"]
+}

@@ -5,6 +5,7 @@
     "packages/protobuf",
     "packages/protoc-gen-es",
     "packages/protoplugin",
+    "packages/protoplugin-transpile",
     "packages/protoplugin-test",
     "packages/protoplugin-example",
     "packages/protobuf-test",

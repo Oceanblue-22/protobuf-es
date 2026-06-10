@@ -40,9 +40,9 @@ if (process.argv.length !== 2 && !check) {
 }
 
 const doNotHoist = {
-  // see packages/protoplugin/src/transpile.ts
+  // see packages/protoplugin-transpile/src/transpile.ts
   "node_modules/@typescript/vfs":
-    "packages/protoplugin/node_modules/@typescript/vfs",
+    "packages/protoplugin-transpile/node_modules/@typescript/vfs",
   // Isolate @types/bun
   "node_modules/@types/bun": "bun/conformance/node_modules/@types/bun",
 };

@@ -27,7 +27,7 @@ import { createSchema } from "./schema.js";
 import type { Schema } from "./schema.js";
 import type { FileInfo } from "./generated-file.js";
 import type { Plugin } from "./plugin.js";
-import { transpile } from "./transpile.js";
+import { transpile } from "@bufbuild/protoplugin-transpile";
 import { parseParameter } from "./parameter.js";
 
 interface PluginInit<Options extends object> {

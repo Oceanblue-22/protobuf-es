@@ -12,13 +12,25 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import type { FileInfo } from "./generated-file.js";
+import path from "node:path";
 import ts from "typescript";
 import {
   createDefaultMapFromNodeModules,
   createSystem,
   createVirtualCompilerHost,
 } from "@typescript/vfs";
+
+/**
+ * Represents a file to transpile, or a transpiled file.
+ *
+ * This type is structurally identical to the FileInfo type of
+ * @bufbuild/protoplugin.
+ */
+export interface FileInfo {
+  name: string;
+  content: string;
+  preamble?: string | undefined;
+}
 
 /**
  * Create a transpiler using the given compiler options, which will compile the
@@ -35,12 +47,9 @@ import {
  * provided, it will be invoked instead and the framework's auto-transpilation
  * will be bypassed.
  *
- * In addition, note that there is a dependency on @typescript/vfs in the
- * top-level package as well as this package.  This is to avoid npm hoisting
- * @typescript/vfs to the top-level node_modules directory, which then causes
- * type mismatches when trying to use it with this package's version of
- * TypeScript.  Ideally we would use something like Yarn's nohoist here, but
- * npm does not support that yet.
+ * In addition, note that scripts/nohoist.js keeps @typescript/vfs out of the
+ * top-level node_modules directory, because hoisting causes type mismatches
+ * when trying to use it with this package's version of TypeScript.
  */
 function createTranspiler(options: ts.CompilerOptions, files: FileInfo[]) {
   const fsMapOptions: ts.CompilerOptions = {};
@@ -48,7 +57,15 @@ function createTranspiler(options: ts.CompilerOptions, files: FileInfo[]) {
     fsMapOptions.target = options.target;
   }
 
-  const fsMap = createDefaultMapFromNodeModules(fsMapOptions);
+  // ts.sys.getExecutingFilePath() is the path to typescript.js within the
+  // pinned package, so the lib files next to it always match the pinned
+  // compiler version.
+  const tsLibDirectory = path.dirname(ts.sys.getExecutingFilePath());
+  const fsMap = createDefaultMapFromNodeModules(
+    fsMapOptions,
+    ts,
+    tsLibDirectory,
+  );
 
   for (const file of files) {
     fsMap.set(file.name, file.content);
